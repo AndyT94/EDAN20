@@ -6,6 +6,7 @@ MIT license: www.opensource.org/licenses/mit-license.php
 ################ Spelling Corrector
 
 import re
+import sys
 from collections import Counter
 
 def words(text): return re.findall(r'\w+', text.lower())
@@ -58,7 +59,6 @@ def unit_tests():
     assert Counter(words('This is a test. 123; A TEST this is.')) == (
            Counter({'123': 1, 'a': 2, 'is': 2, 'test': 2, 'this': 2}))
     assert len(WORDS) == 32192
-#    print(sum(WORDS.values()))
     assert sum(WORDS.values()) == 1115504
     assert WORDS.most_common(10) == [
      ('the', 79808),
@@ -100,7 +100,12 @@ def Testset(lines):
             for (right, wrongs) in (line.split(':') for line in lines)
             for wrong in wrongs.split()]
 
+#def main(args):
+#    for word in args:
+#        print(correction(word))
+
 if __name__ == '__main__':
     print(unit_tests())
     spelltest(Testset(open('spell-testset1.txt')))
     spelltest(Testset(open('spell-testset2.txt')))
+#    main(sys.argv[1:])
