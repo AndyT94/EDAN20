@@ -23,9 +23,12 @@ def index(text, dict, filename):
     regex = re.compile(r'\p{L}+')
     for match in regex.finditer(text.lower()):
         if dict.get(match.group()) is None:
-            dict[match.group()] = [match.start()]
+            dict[match.group()] = {}
+            dict[match.group()][filename] = [match.start()]
+        elif dict[match.group()].get(filename) is None:
+            dict[match.group()][filename] = [match.start()]
         else:
-            dict[match.group()] += [match.start()]
+            dict[match.group()][filename] += [match.start()]
 
 
 def main(args):
@@ -33,9 +36,7 @@ def main(args):
     for file in get_files(args, '.txt'):
         f = open(args + '/' + file).read()
         index(f, dict, file)
-    for k in dict.keys():
-        print(k, dict.get(k))
-        # pickle.dump(dict, 'masterindex.idx', 'wb')
+    pickle.dump(dict, open('masterindex.idx', 'wb'))
 
 
 if __name__ == '__main__':
