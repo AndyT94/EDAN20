@@ -43,6 +43,7 @@ def getNbrWords(files, dict):
         docWords[file] = nbrWords
     return docWords
 
+
 def calctfidf(files, dict):
     docWords = getNbrWords(files, dict)
     tfidf = {}
@@ -60,6 +61,22 @@ def calctfidf(files, dict):
     return tfidf
 
 
+def cosSim(tfidf):
+    sim = {}
+    for file in tfidf.keys():
+        for f in tfidf.keys():
+            if f != file:
+                sumAB = 0
+                sumAA = 0
+                sumBB = 0
+                for word in tfidf.get(file):
+                    sumAB += tfidf.get(file).get(word) * tfidf.get(f).get(word)
+                    sumAA += tfidf.get(file).get(word) * tfidf.get(file).get(word)
+                    sumBB += tfidf.get(f).get(word) * tfidf.get(f).get(word)
+                sim[file + ' <-> ' + f] = sumAB / (math.sqrt(sumAA) * math.sqrt(sumBB))
+    return sim
+
+
 def main(args):
     dict = {}
     files = get_files('Selma', '.txt')
@@ -68,6 +85,14 @@ def main(args):
         index(f, dict, file)
 
     tfidf = calctfidf(files, dict)
+    sim = cosSim(tfidf)
+
+    maxval = max(sim.values())
+    maxdocs = ''
+    for k in sim.keys():
+        if sim[k] == maxval:
+            maxdocs += k + ' '
+    print(maxdocs, maxval)
 
     pickle.dump(dict, open('masterindex.idx', 'wb'))
 
