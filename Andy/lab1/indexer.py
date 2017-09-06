@@ -79,9 +79,9 @@ def cosSim(tfidf):
 
 def main(args):
     dict = {}
-    files = get_files('Selma', '.txt')
+    files = get_files(args, '.txt')
     for file in files:
-        f = open('Selma' + '/' + file).read()
+        f = open(args + '/' + file).read()
         index(f, dict, file)
 
     tfidf = calctfidf(files, dict)
