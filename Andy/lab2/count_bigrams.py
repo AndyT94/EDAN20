@@ -31,4 +31,4 @@ if __name__ == '__main__':
     words = tokenize(text)
     frequency_bigrams = count_bigrams(words)
     for bigram in frequency_bigrams:
-    print(frequency_bigrams[bigram], "\t", bigram)
+        print(frequency_bigrams[bigram], "\t", bigram)
