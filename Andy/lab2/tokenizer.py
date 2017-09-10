@@ -28,7 +28,7 @@ def tokenize2(text):
     returns a list of words"""
     # words = re.findall('[a-zåàâäæçéèêëîïôöœßùûüÿA-ZÅÀÂÄÆÇÉÈÊËÎÏÔÖŒÙÛÜŸ’\-]+', text)
     # words = re.findall('\w+', text)
-    words = re.findall('\p{L}+', text)
+    words = re.findall('<s>|</s>|\p{L}+', text)
     return words
 
 
