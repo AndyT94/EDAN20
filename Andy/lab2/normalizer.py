@@ -76,8 +76,9 @@ if __name__ == '__main__':
     print('bigrams count: ', len(bigrams))
     nbr_words = len(tokens)
 
-    a = "<s> det var en gång en katt som hette nils </s>"
-    print_unigram(unigrams, a, nbr_words)
+    a = "Det var en gång en katt som hette nils."
+    a_norm = normalize(a)
+    print_unigram(unigrams, a_norm, nbr_words)
     print()
-    print_bigram(unigrams, bigrams, a, nbr_words)
+    print_bigram(unigrams, bigrams, a_norm, nbr_words)
 
