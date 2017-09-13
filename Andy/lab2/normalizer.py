@@ -43,6 +43,7 @@ def print_bigram(unigrams, bigrams, sentence, nbr_words):
     print('Bigram model')
     print('=========================================================')
     print('wi\twi+1\tCi,i+1\tC(i)\tP(wi+1|wi)')
+    print('=========================================================')
     split = sentence.split()
     bi_prob = 1
     for i in range (1, len(split)):
@@ -76,9 +77,8 @@ if __name__ == '__main__':
     print('bigrams count: ', len(bigrams))
     nbr_words = len(tokens)
 
-    a = "Det var en gång en katt som hette nils."
+    a = "Det var en gång en katt som hette Nils."
     a_norm = normalize(a)
     print_unigram(unigrams, a_norm, nbr_words)
     print()
     print_bigram(unigrams, bigrams, a_norm, nbr_words)
-
