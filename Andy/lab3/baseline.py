@@ -49,6 +49,8 @@ def train(corpus):
     You will build a dictionary with key values:
     pos_chunk[pos] = most frequent chunk for pos
     """
+    for key in chunk_dist.keys():
+        pos_chunk[key] = max(chunk_dist[key], key=chunk_dist[key].get)
     return pos_chunk
 
 
