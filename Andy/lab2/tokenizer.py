@@ -28,7 +28,7 @@ def tokenize2(text):
     returns a list of words"""
     # words = re.findall('[a-zåàâäæçéèêëîïôöœßùûüÿA-ZÅÀÂÄÆÇÉÈÊËÎÏÔÖŒÙÛÜŸ’\-]+', text)
     # words = re.findall('\w+', text)
-    words = re.findall('\p{L}+', text)
+    words = re.findall('<s>|</s>|\p{L}+', text)
     return words
 
 
@@ -59,6 +59,11 @@ if __name__ == '__main__':
         print(word)
     words = tokenize2(text)
     print(words)"""
+<<<<<<< HEAD
     words = tokenize(text)
     print(words)
     print(len(words))
+=======
+    words = tokenize4(text)
+    print(words)
+>>>>>>> e6449b6d184381babc180b4d6a5f1556ea62b691
