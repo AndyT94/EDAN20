@@ -56,7 +56,7 @@ def extract_features_sent(sentence, w_size, feature_names):
     for line in sentence:
         line = line.split()
         padded_sentence.append(line)
-    # print(padded_sentence)
+    #print(padded_sentence)
 
     # We extract the features and the classes
     # X contains is a list of features, where each feature vector is a dictionary
@@ -73,6 +73,8 @@ def extract_features_sent(sentence, w_size, feature_names):
         for j in range(2 * w_size + 1):
             x.append(padded_sentence[i + j][1])
         # The chunks (Up to the word)
+        for j in range(w_size):
+            x.append(padded_sentence[i - j + 1][2])
         """
         for j in range(w_size):
             feature_line.append(padded_sentence[i + j][2])
@@ -127,17 +129,22 @@ def encode_classes(y_symbols):
 def predict(test_sentences, feature_names, f_out):
     for test_sentence in test_sentences:
         X_test_dict, y_test_symbols = extract_features_sent(test_sentence, w_size, feature_names)
-        # Vectorize the test sentence and one hot encoding
-        X_test = vec.transform(X_test_dict)
-        # Predicts the chunks and returns numbers
-        y_test_predicted = classifier.predict(X_test)
-        # Converts to chunk names
-        y_test_predicted_symbols = list(dict_classes[i] for i in y_test_predicted)
-        # Appends the predicted chunks as a last column and saves the rows
+        chunk_n1 = 'BOS'
+        chunk_n2 = 'BOS'
         rows = test_sentence.splitlines()
-        rows = [rows[i] + ' ' + y_test_predicted_symbols[i] for i in range(len(rows))]
-        for row in rows:
-            f_out.write(row + '\n')
+        rows = [rows[i] for i in range(len(rows))]
+        for i, word in enumerate(X_test_dict):
+            word['chunk_n2'] = chunk_n2
+            word['chunk_n1'] = chunk_n1
+            # Vectorize the test sentence and one hot encoding
+            X_test = vec.transform(word)
+            # Predicts the chunks and returns numbers
+            y_test_predicted = classifier.predict(X_test)
+            # Converts to chunk names
+            y_test_predicted_symbols = dict_classes[y_test_predicted[0]]
+            chunk_n2 = chunk_n1
+            chunk_n1 = y_test_predicted_symbols
+            f_out.write(rows[i] + ' ' + y_test_predicted_symbols + '\n')
         f_out.write('\n')
     f_out.close()
 
@@ -148,7 +155,8 @@ if __name__ == '__main__':
     test_corpus = 'test.txt'
     w_size = 2  # The size of the context window to the left and right of the word
     feature_names = ['word_n2', 'word_n1', 'word', 'word_p1', 'word_p2',
-                     'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2']
+                        'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2', 'chunk_n1', 'chunk_n2']
+
 
     train_sentences = conll_reader.read_sentences(train_corpus)
 
@@ -191,7 +199,7 @@ if __name__ == '__main__':
     # but we need to predict one sentence at a time to have the same
     # corpus structure
     print("Predicting the test set...")
-    f_out = open('out', 'w')
+    f_out = open('out', 'w', newline='\n')
     predict(test_sentences, feature_names, f_out)
 
     end_time = time.clock()
