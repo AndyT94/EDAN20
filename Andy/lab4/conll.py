@@ -74,7 +74,7 @@ def save(file, formatted_corpus, column_names):
     f_out.close()
 
 
-def count_subject_verb_pairs(corpus):
+def count_subject_verb(corpus):
     freq = {}
     for sentence in corpus:
         for word in sentence:
@@ -85,9 +85,24 @@ def count_subject_verb_pairs(corpus):
                     freq[(word['form'].lower(), sentence[int(word['head'])]['form'].lower())] = 1
     print('Total number of pairs: ', sum(freq.values()))
     sort_freq = sorted(freq.items(), key=lambda x:x[1], reverse=True)
-    for i in range(5):
-        print(sort_freq[i])
+    return sort_freq
 
+
+def count_subject_verb_object(corpus):
+    freq = {}
+    for sentence in corpus:
+        for word in sentence:
+            if word['deprel'] == 'OO':
+                verb_index = int(word['head'])
+                for w in sentence:
+                    if w['deprel'] == 'SS' and verb_index == int(w['head']):
+                        if (w['form'].lower(), sentence[verb_index]['form'].lower(), word['form'].lower()) in freq:
+                            freq[(w['form'].lower(), sentence[verb_index]['form'].lower(), word['form'].lower())] += 1
+                        else:
+                            freq[(w['form'].lower(), sentence[verb_index]['form'].lower(), word['form'].lower())] = 1
+    print('Total number of triplets: ', sum(freq.values()))
+    sort_freq = sorted(freq.items(), key=lambda x:x[1], reverse=True)
+    return sort_freq
 
 if __name__ == '__main__':
     column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
@@ -102,7 +117,13 @@ if __name__ == '__main__':
     #print(train_file, len(formatted_corpus))
     #print(formatted_corpus[0])
 
-    count_subject_verb_pairs(formatted_corpus)
+    pairs = count_subject_verb(formatted_corpus)
+    for i in range(5):
+        print(pairs[i])
+
+    triplets = count_subject_verb_object(formatted_corpus)
+    for i in range(5):
+        print(triplets[i])
 
     column_names_u = ['id', 'form', 'lemma', 'upostag', 'xpostag', 'feats', 'head', 'deprel', 'deps', 'misc']
 
