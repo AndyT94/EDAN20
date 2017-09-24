@@ -84,7 +84,7 @@ def count_subject_verb(corpus):
                 else:
                     freq[(word['form'].lower(), sentence[int(word['head'])]['form'].lower())] = 1
     print('Total number of pairs: ', sum(freq.values()))
-    sort_freq = sorted(freq.items(), key=lambda x:x[1], reverse=True)
+    sort_freq = sorted(freq.items(), key=lambda x: x[1], reverse=True)
     return sort_freq
 
 
@@ -101,8 +101,9 @@ def count_subject_verb_object(corpus):
                         else:
                             freq[(w['form'].lower(), sentence[verb_index]['form'].lower(), word['form'].lower())] = 1
     print('Total number of triplets: ', sum(freq.values()))
-    sort_freq = sorted(freq.items(), key=lambda x:x[1], reverse=True)
+    sort_freq = sorted(freq.items(), key=lambda x: x[1], reverse=True)
     return sort_freq
+
 
 if __name__ == '__main__':
     column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
@@ -113,9 +114,9 @@ if __name__ == '__main__':
 
     sentences = read_sentences(train_file)
     formatted_corpus = split_rows(sentences, column_names_2006)
-    #print(formatted_corpus)
-    #print(train_file, len(formatted_corpus))
-    #print(formatted_corpus[0])
+    # print(formatted_corpus)
+    # print(train_file, len(formatted_corpus))
+    # print(formatted_corpus[0])
 
     pairs = count_subject_verb(formatted_corpus)
     for i in range(5):
