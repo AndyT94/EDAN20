@@ -85,7 +85,8 @@ def count_subject_verb_pairs(corpus):
                     freq[(word['form'].lower(), sentence[int(word['head'])]['form'].lower())] = 1
     print('Total number of pairs: ', sum(freq.values()))
     sort_freq = sorted(freq.items(), key=lambda x:x[1], reverse=True)
-    print(sort_freq)
+    for i in range(5):
+        print(sort_freq[i])
 
 
 if __name__ == '__main__':
@@ -105,9 +106,10 @@ if __name__ == '__main__':
 
     column_names_u = ['id', 'form', 'lemma', 'upostag', 'xpostag', 'feats', 'head', 'deprel', 'deps', 'misc']
 
-    files = get_files('.', 'train.conll')
+    '''files = get_files('.', 'train.conll')
     for train_file in files:
         sentences = read_sentences(train_file)
         formatted_corpus = split_rows(sentences, column_names_u)
         print(train_file, len(formatted_corpus))
         print(formatted_corpus[0])
+    '''
