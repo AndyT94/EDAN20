@@ -74,11 +74,19 @@ def save(file, formatted_corpus, column_names):
     f_out.close()
 
 
-def count_subject_verb(corpus):
+def count_subject_verb_pairs(corpus):
     freq = {}
     for sentence in corpus:
         for word in sentence:
-            
+            if word['deprel'] == 'SS':
+                if (word['form'].lower(), sentence[int(word['head'])]['form'].lower()) in freq:
+                    freq[(word['form'].lower(), sentence[int(word['head'])]['form'].lower())] += 1
+                else:
+                    freq[(word['form'].lower(), sentence[int(word['head'])]['form'].lower())] = 1
+    print('Total number of pairs: ', sum(freq.values()))
+    sort_freq = sorted(freq.items(), key=lambda x:x[1], reverse=True)
+    print(sort_freq)
+
 
 if __name__ == '__main__':
     column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
@@ -89,9 +97,11 @@ if __name__ == '__main__':
 
     sentences = read_sentences(train_file)
     formatted_corpus = split_rows(sentences, column_names_2006)
-    print(formatted_corpus)
-    print(train_file, len(formatted_corpus))
-    print(formatted_corpus[0])
+    #print(formatted_corpus)
+    #print(train_file, len(formatted_corpus))
+    #print(formatted_corpus[0])
+
+    count_subject_verb_pairs(formatted_corpus)
 
     column_names_u = ['id', 'form', 'lemma', 'upostag', 'xpostag', 'feats', 'head', 'deprel', 'deps', 'misc']
 
