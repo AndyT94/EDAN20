@@ -80,6 +80,8 @@ def count_subject_verb(corpus):
         for word in sentence:
             
 
+
+
 if __name__ == '__main__':
     column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
 
