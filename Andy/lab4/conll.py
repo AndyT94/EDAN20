@@ -74,11 +74,36 @@ def save(file, formatted_corpus, column_names):
     f_out.close()
 
 
-def count_subject_verb(corpus):
+def count_subject_verb(corpus, SS):
     freq = {}
     for sentence in corpus:
         for word in sentence:
-            
+            if word['deprel'] == SS:
+                if (word['form'].lower(), sentence[int(word['head'])]['form'].lower()) in freq:
+                    freq[(word['form'].lower(), sentence[int(word['head'])]['form'].lower())] += 1
+                else:
+                    freq[(word['form'].lower(), sentence[int(word['head'])]['form'].lower())] = 1
+    print('Total number of pairs: ', sum(freq.values()))
+    sort_freq = sorted(freq.items(), key=lambda x: x[1], reverse=True)
+    return sort_freq
+
+
+def count_subject_verb_object(corpus, SS, OO):
+    freq = {}
+    for sentence in corpus:
+        for word in sentence:
+            if word['deprel'] == OO:
+                verb_index = int(word['head'])
+                for w in sentence:
+                    if w['deprel'] == SS and verb_index == int(w['head']):
+                        if (w['form'].lower(), sentence[verb_index]['form'].lower(), word['form'].lower()) in freq:
+                            freq[(w['form'].lower(), sentence[verb_index]['form'].lower(), word['form'].lower())] += 1
+                        else:
+                            freq[(w['form'].lower(), sentence[verb_index]['form'].lower(), word['form'].lower())] = 1
+    print('Total number of triplets: ', sum(freq.values()))
+    sort_freq = sorted(freq.items(), key=lambda x: x[1], reverse=True)
+    return sort_freq
+
 
 
 
@@ -91,15 +116,34 @@ if __name__ == '__main__':
 
     sentences = read_sentences(train_file)
     formatted_corpus = split_rows(sentences, column_names_2006)
-    print(formatted_corpus)
-    print(train_file, len(formatted_corpus))
-    print(formatted_corpus[0])
+    # print(formatted_corpus)
+    # print(train_file, len(formatted_corpus))
+    # print(formatted_corpus[0])
+
+    pairs = count_subject_verb(formatted_corpus, 'SS')
+    for i in range(5):
+        print(pairs[i])
+
+    triplets = count_subject_verb_object(formatted_corpus, 'SS', 'OO')
+    for i in range(5):
+        print(triplets[i])
 
     column_names_u = ['id', 'form', 'lemma', 'upostag', 'xpostag', 'feats', 'head', 'deprel', 'deps', 'misc']
 
-    files = get_files('.', 'train.conll')
+    files = get_files('ud-treebanks-conll2017', 'train.conllu')
     for train_file in files:
+        print('\n', train_file)
         sentences = read_sentences(train_file)
         formatted_corpus = split_rows(sentences, column_names_u)
-        print(train_file, len(formatted_corpus))
-        print(formatted_corpus[0])
+        # print(train_file, len(formatted_corpus))
+        # print(formatted_corpus[0])
+
+        pairs = count_subject_verb(formatted_corpus, 'nsubj')
+        if len(pairs) > 5:
+            for i in range(5):
+                print(pairs[i])
+
+        triplets = count_subject_verb_object(formatted_corpus, 'nsubj', 'obj')
+        if len(triplets) > 5:
+            for i in range(5):
+                print(triplets[i])
