@@ -5,6 +5,7 @@ __author__ = "Pierre Nugues"
 
 import transition
 import conll
+import features
 
 
 def reference(stack, queue, graph):
@@ -45,15 +46,20 @@ def reference(stack, queue, graph):
 
 
 if __name__ == '__main__':
-    train_file = 'swedish_talbanken05_train.conll'
+    train_file = 'test.conll'
     test_file = 'swedish_talbanken05_test_blind.conll'
     column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
     column_names_2006_test = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats']
+    #feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la']
+    #feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la', 'stack1_POS', 'stack1_word', 'queue1_POS', 'queue1_word']
+    feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la', 'stack1_POS', 'stack1_word', 'queue1_POS', 'queue1_word', 'stack_next_POS', 'stack_next_word', 'queue_next_POS', 'queue_next_word']
 
     sentences = conll.read_sentences(train_file)
     formatted_corpus = conll.split_rows(sentences, column_names_2006)
 
     sent_cnt = 0
+    X = list()
+    y = list()
     for sentence in formatted_corpus:
         sent_cnt += 1
         if sent_cnt % 1000 == 0:
@@ -67,13 +73,15 @@ if __name__ == '__main__':
         graph['deprels']['0'] = 'ROOT'
         transitions = []
         while queue:
+            X.append(features.extract(stack, queue, graph, feature_name, sentence))
             stack, queue, graph, trans = reference(stack, queue, graph)
             transitions.append(trans)
+            y.append(trans)
         stack, graph = transition.empty_stack(stack, graph)
         print('Equal graphs:', transition.equal_graphs(sentence, graph))
 
         # Poorman's projectivization to have well-formed graphs.
         for word in sentence:
             word['head'] = graph['heads'][word['id']]
-        print(transitions)
-        print(graph)
+        # print(transitions)
+        # print(graph)
