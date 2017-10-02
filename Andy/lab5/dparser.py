@@ -71,9 +71,9 @@ if __name__ == '__main__':
     test_file = 'swedish_talbanken05_test.conll'
     column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
     column_names_2006_test = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats']
-    #feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la']
+    feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la']
     #feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la', 'stack1_POS', 'stack1_word', 'queue1_POS', 'queue1_word']
-    feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la', 'stack1_POS', 'stack1_word', 'queue1_POS', 'queue1_word', 'stack_next_POS', 'stack_next_word', 'queue_next_POS', 'queue_next_word']
+    #feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la', 'stack1_POS', 'stack1_word', 'queue1_POS', 'queue1_word', 'stack_next_POS', 'stack_next_word', 'queue_next_POS', 'queue_next_word']
 
     sentences = conll.read_sentences(train_file)
     formatted_corpus = conll.split_rows(sentences, column_names_2006)
@@ -114,7 +114,7 @@ if __name__ == '__main__':
     classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
     model = classifier.fit(X, y)
     print(model)
-    joblib.dump(model, 'set3.pkl')
+    joblib.dump(model, 'set1.pkl')
 
     test_sentences = conll.read_sentences(test_file)
     test_formatted_corpus = conll.split_rows(test_sentences, column_names_2006)
@@ -153,3 +153,4 @@ if __name__ == '__main__':
     y_test_predicted = classifier.predict(X_test)
     print("Classification report for classifier %s:\n%s\n"
           % (classifier, metrics.classification_report(y_test, y_test_predicted)))
+    #clf = joblib.load('filename.pkl')
