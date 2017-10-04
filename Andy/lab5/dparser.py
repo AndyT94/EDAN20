@@ -10,6 +10,7 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn import linear_model
 from sklearn import metrics
 from sklearn.externals import joblib
+import pickle
 
 
 def reference(stack, queue, graph):
@@ -71,9 +72,9 @@ if __name__ == '__main__':
     test_file = 'swedish_talbanken05_test.conll'
     column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
     column_names_2006_test = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats']
-    feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la']
+    #feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la']
     #feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la', 'stack1_POS', 'stack1_word', 'queue1_POS', 'queue1_word']
-    #feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la', 'stack1_POS', 'stack1_word', 'queue1_POS', 'queue1_word', 'stack_next_POS', 'stack_next_word', 'queue_next_POS', 'queue_next_word']
+    feature_name = ['stack0_POS', 'stack0_word', 'queue0_POS', 'queue0_word', 'can-re', 'can-la', 'stack1_POS', 'stack1_word', 'queue1_POS', 'queue1_word', 'stack_next_POS', 'stack_next_word', 'queue_next_POS', 'queue_next_word']
 
     sentences = conll.read_sentences(train_file)
     formatted_corpus = conll.split_rows(sentences, column_names_2006)
@@ -110,12 +111,14 @@ if __name__ == '__main__':
     vec = DictVectorizer(sparse=True)
     X = vec.fit_transform(X_dict)
     y, dict_classes, inv_dict_classes = encode_classes(y_symbols)
-    print("Training the model...")
+    pickle.dump(dict_classes, open('mapping3', 'wb'))
+    '''print("Training the model...")
     classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
     model = classifier.fit(X, y)
     print(model)
     joblib.dump(model, 'set1.pkl')
 
+    classifier = joblib.load('set1.pkl')
     test_sentences = conll.read_sentences(test_file)
     test_formatted_corpus = conll.split_rows(test_sentences, column_names_2006)
     # Here we carry out a chunk tag prediction and we report the per tag error
@@ -153,4 +156,4 @@ if __name__ == '__main__':
     y_test_predicted = classifier.predict(X_test)
     print("Classification report for classifier %s:\n%s\n"
           % (classifier, metrics.classification_report(y_test, y_test_predicted)))
-    #clf = joblib.load('filename.pkl')
+    #clf = joblib.load('filename.pkl')'''
